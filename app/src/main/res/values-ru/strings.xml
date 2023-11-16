@@ -2,4 +2,23 @@
 <resources>
     <string name="app_name">НМедиа</string>
     <string name="app_heading">НМедиа!</string>
+    <string name="logo_alt">Логотип НМедиа</string>
+    <string name="author_mock">Нетология. Университет интернет-пофессий</string>
+    <string name="published_mock">21 мая в 18:36</string>
+    <string name="menu_button">Кнопка меню</string>
+    <string name="mock_content">
+        Привет, это новая нетология! Когда-то нетология начиналась с интенсивов по онлайн маркетингу.
+        Затем появились курсы по дизайну, разработке, аналитике и управлению.
+        Мы растем сами и помогаем расти студентам: от новичков до уверенных профессионалов.
+        Но самое важное остается с нами: мы верим, что в каждом уже есть сила, которая заставляет
+        хотеть больше, целиться выше, бежать быстрее. Наша миссия - помочь встать на путь роста и
+        начать цепочку перемен - <a href="http://netolo.gy/fyb">http://netolo.gy/fyb</a>
+    </string>
+    <string name="mock_likes">10</string>
+    <string name="mock_shares">5</string>
+    <string name="mock_seen">5</string>
+    <string name="like_alt">Иконка Мне нравится</string>
+    <string name="share_alt">Иконка Поделиться</string>
+    <string name="seen_alt">Иконка Просмотрено</string>
+
 </resources>
