@@ -19,5 +19,11 @@
     <string name="like_alt">Like icon</string>
     <string name="share_alt">Shared icon</string>
     <string name="seen_alt">Seen icon</string>
-
+    <string name="remove">Remove</string>
+    <string name="edit">Edit</string>
+    <string name="edit_alt">Edit post icon</string>
+    <string name="edit_hint">Edit post</string>
+    <string name="content_hint">Post text</string>
+    <string name="cancel_button">Cancel Button</string>
+    <string name="save_button">Save button</string>
 </resources>

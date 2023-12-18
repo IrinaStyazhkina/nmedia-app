@@ -4,10 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.Post
 
+private var nextId = 2L
+
 class PostRepositoryInMemoryImpl: PostRepository {
 
     private var posts = listOf<Post>(Post(
-        id = 1,
+        id = 2,
         author = "Нетология. Университет интернет-пофессий будущего",
         content = "Привет, это новая нетология! Когда-то нетология начиналась с интенсивов по онлайн маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растем сами и помогаем расти студентам: от новичков до уверенных профессионалов.Но самое важное остается с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. Наша миссия - помочь встать на путь роста и начать цепочку перемен - <a href=\"http://netolo.gy/fyb\">http://netolo.gy/fyb</a>",
         published = "21 мая в 18:36",
@@ -16,7 +18,7 @@ class PostRepositoryInMemoryImpl: PostRepository {
         seen = 20,
         likedByMe = false,
     ), Post(
-        id = 2,
+        id = 1,
         author = "Нетология. Университет интернет-пофессий будущего",
         content = "Второй пост про нетологию",
         published = "22 мая в 18:36",
@@ -38,6 +40,31 @@ class PostRepositoryInMemoryImpl: PostRepository {
     override fun shareById(id: Long) {
         posts = posts.map {
             if(it.id != id) it else it.copy(shares = it.shares + 1)
+        }
+        data.value = posts
+    }
+
+    override fun removeById(id: Long) {
+        posts = posts.filter { it.id != id }
+        data.value = posts
+    }
+
+    override fun save(post: Post) {
+        if(post.id == 0L) {
+            posts = listOf(
+                post.copy(
+                    id = ++nextId,
+                    author="Нетология",
+                    likedByMe = false,
+                    published = "now"
+                )
+            ) + posts
+            data.value = posts
+            return
+        }
+
+        posts = posts.map {
+            if (it.id != post.id) it else it.copy(content = post.content)
         }
         data.value = posts
     }

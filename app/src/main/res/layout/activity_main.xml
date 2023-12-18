@@ -1,17 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    >
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/card_post"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:id="@+id/scrollList"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:paddingTop="@dimen/common_spacing"
+        app:layout_constraintBottom_toTopOf="@id/inputBarrier"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_post" />
+    </ScrollView>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/inputBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="scrollList" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/editGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="cancel, ivEditContent, tvEditContent" />
+
+    <ImageView
+        android:id="@+id/ivEditContent"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:layout_margin="@dimen/small_spacing"
+        android:contentDescription="@string/edit_alt"
+        app:layout_constraintBottom_toTopOf="@id/content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputBarrier"
+        app:srcCompat="@drawable/baseline_edit_24"
+        app:tint="@color/grey" />
+
+    <TextView
+        android:id="@+id/tvEditContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_spacing"
+        android:text="@string/edit_hint"
+        android:textColor="@color/grey"
+        app:layout_constraintBottom_toBottomOf="@id/ivEditContent"
+        app:layout_constraintStart_toEndOf="@id/ivEditContent"
+        app:layout_constraintTop_toTopOf="@id/ivEditContent"
+        tools:text="@string/edit_hint" />
+
+    <ImageButton
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/small_spacing"
+        android:src="@drawable/baseline_close_36"
+        android:contentDescription="@string/cancel_button"
+        app:layout_constraintBottom_toBottomOf="@id/ivEditContent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ivEditContent"
+        app:tint="@color/grey" />
+
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:focusable="true"
+        android:hint="@string/content_hint"
+        android:importantForAutofill="no"
+        android:inputType="none|text|textCapWords|textUri|textMultiLine"
+        android:padding="@dimen/common_spacing"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/save"
+        app:layout_constraintStart_toStartOf="parent"
         />
-</FrameLayout>
+
+    <ImageButton
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/small_spacing"
+        android:src="@drawable/baseline_check_circle_outline_36"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/save_button"
+        app:tint="@color/grey"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
