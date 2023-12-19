@@ -34,10 +34,6 @@ class MainActivity : AppCompatActivity() {
                 viewModel.edit(post)
                 binding.editGroup.visibility = View.VISIBLE
             }
-
-            override fun onClose() {
-                viewModel.cancelEdit()
-            }
         })
         binding.list.adapter = adapter
 
@@ -62,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.cancel.setOnClickListener {
+            viewModel.cancelEdit()
             with(binding.content) {
                 setText("")
                 clearFocus()
