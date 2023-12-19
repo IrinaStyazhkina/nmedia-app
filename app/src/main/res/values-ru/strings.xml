@@ -20,5 +20,11 @@
     <string name="like_alt">Иконка Мне нравится</string>
     <string name="share_alt">Иконка Поделиться</string>
     <string name="seen_alt">Иконка Просмотрено</string>
-
+    <string name="remove">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="edit_alt">Иконка редактирования поста</string>
+    <string name="edit_hint">Редактирование поста</string>
+    <string name="content_hint">Текст поста</string>
+    <string name="cancel_button">Кнопка Отменить редактирование</string>
+    <string name="save_button">Кнопка Сохранить</string>
 </resources>
