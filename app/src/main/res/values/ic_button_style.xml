@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.AppTheme.IconButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="iconTint">?attr/colorControlNormal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="iconPadding">@dimen/small_spacing</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">@dimen/small_spacing</item>
+        <item name="android:paddingRight">@dimen/small_spacing</item>
+        <item name="android:minWidth">@dimen/icon_size</item>
+        <item name="android:minHeight">@dimen/icon_size</item>
+    </style>
+
+    <style name="Widget.AppTheme.LikeCheckBox" parent="Widget.AppTheme.IconButton">
+        <item name="iconTint">@color/like_icon_tint</item>
+    </style>
+
+    <style name="Widget.AppTheme.MenuButton" parent="Widget.AppTheme.IconButton">
+        <item name="iconPadding">0dp</item>
+    </style>
+</resources>
