@@ -1,13 +1,13 @@
 package ru.netology.nmedia
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
+import ru.netology.nmedia.activity.NewPostResultContract
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
-import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.viewModel.PostViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -17,13 +17,38 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val viewModel: PostViewModel by viewModels()
+
+        val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
+            if (result == null) {
+                viewModel.cancelEdit()
+            } else {
+                viewModel.changeContent(result)
+                viewModel.save()
+            }
+        }
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
                 viewModel.likeById(post.id)
             }
 
             override fun onShare(post: Post) {
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    type="text/plain"
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                }
+
+                val shareIntent = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                startActivity(shareIntent)
                 viewModel.shareById(post.id)
+            }
+
+            override fun onPlay(post: Post) {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(post.video)
+                }
+                val playIntent = Intent.createChooser(intent, getString(R.string.chooser_play_video))
+                startActivity(playIntent)
             }
 
             override fun onRemove(post: Post) {
@@ -32,53 +57,17 @@ class MainActivity : AppCompatActivity() {
 
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
-                binding.editGroup.visibility = View.VISIBLE
+                newPostLauncher.launch(post.content)
             }
         })
         binding.list.adapter = adapter
-
-        binding.save.setOnClickListener {
-            with(binding.content) {
-                if (text.isNullOrBlank()) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Content can't be empty",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-                viewModel.changeContent(text.toString())
-                viewModel.save()
-
-                setText("")
-                clearFocus()
-                AndroidUtils.hideKeyboard(this)
-                binding.editGroup.visibility = View.GONE
-            }
-        }
-
-        binding.cancel.setOnClickListener {
-            viewModel.cancelEdit()
-            with(binding.content) {
-                setText("")
-                clearFocus()
-                AndroidUtils.hideKeyboard(this)
-            }
-            binding.editGroup.visibility = View.GONE
-        }
 
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts)
         }
 
-        viewModel.edited.observe(this) { post ->
-            if(post.id ==0L) {
-                return@observe
-            }
-            with(binding.content) {
-                requestFocus()
-                setText(post.content)
-            }
+        binding.fab.setOnClickListener {
+            newPostLauncher.launch("")
         }
     }
 }

@@ -26,4 +26,10 @@
     <string name="content_hint">Post text</string>
     <string name="cancel_button">Cancel Button</string>
     <string name="save_button">Save button</string>
+    <string name="add_post">Add post</string>
+    <string name="error_empty_content">Content can not be empty</string>
+    <string name="chooser_share_post">Share post</string>
+    <string name="chooser_play_video">Play video</string>
+    <string name="video_img">Video image</string>
+    <string name="play_video">Play video</string>
 </resources>

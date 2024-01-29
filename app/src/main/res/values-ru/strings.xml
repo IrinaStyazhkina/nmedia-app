@@ -27,4 +27,10 @@
     <string name="content_hint">Текст поста</string>
     <string name="cancel_button">Кнопка Отменить редактирование</string>
     <string name="save_button">Кнопка Сохранить</string>
+    <string name="add_post">Добавить пост</string>
+    <string name="error_empty_content">Контент не может быть пустым</string>
+    <string name="chooser_share_post">Поделиться постом</string>
+    <string name="chooser_play_video">Воспроизвести видео</string>
+    <string name="video_img">Картинка видео</string>
+    <string name="play_video">Воспроизвести видео</string>
 </resources>
