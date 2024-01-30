@@ -25,7 +25,7 @@ class PostViewHolder(
 
             like.isChecked = post.likedByMe
 
-            if (post?.video != null) {
+            if (post.video != null) {
                 videoGroup.visibility = View.VISIBLE
                 videoImg.setOnClickListener {
                    onInteractionListener.onPlay(post)
@@ -33,6 +33,8 @@ class PostViewHolder(
                 play.setOnClickListener {
                     onInteractionListener.onPlay(post)
                 }
+            } else {
+                videoGroup.visibility = View.GONE
             }
 
             like.setOnClickListener {
