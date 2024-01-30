@@ -74,9 +74,41 @@
         android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginBottom="@dimen/common_spacing"
         app:layout_constraintTop_toBottomOf="@id/headerBarrier"
-        app:layout_constraintBottom_toTopOf="@id/contentBarrier"
+        app:layout_constraintBottom_toTopOf="@id/videoImg"
         android:justificationMode="inter_word"
         android:textColorLink="@color/blue"
+        />
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/videoGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="videoImg, play" />
+
+    <ImageView
+        android:id="@+id/videoImg"
+        android:layout_width="@dimen/big_image_size"
+        android:layout_height="@dimen/big_image_size"
+        android:contentDescription="@string/video_img"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/video"
+        android:layout_marginBottom="@dimen/common_spacing"
+        app:layout_constraintTop_toBottomOf="@id/tvContent"
+        app:layout_constraintBottom_toTopOf="@id/contentBarrier"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/play_video"
+        app:icon="@drawable/baseline_play_arrow_48"
+        app:layout_constraintTop_toTopOf="@id/videoImg"
+        app:layout_constraintBottom_toBottomOf="@id/videoImg"
+        app:layout_constraintStart_toStartOf="@id/videoImg"
+        app:layout_constraintEnd_toEndOf="@id/videoImg"
+        android:layout_marginStart="@dimen/small_spacing"
         />
 
     <androidx.constraintlayout.widget.Barrier
