@@ -9,7 +9,7 @@ private var nextId = 2L
 class PostRepositoryInMemoryImpl: PostRepository {
 
     private var posts = listOf<Post>(Post(
-        id = 2,
+        id = 2L,
         author = "Нетология. Университет интернет-пофессий будущего",
         content = "Привет, это новая нетология! Когда-то нетология начиналась с интенсивов по онлайн маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растем сами и помогаем расти студентам: от новичков до уверенных профессионалов.Но самое важное остается с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. Наша миссия - помочь встать на путь роста и начать цепочку перемен - <a href=\"http://netolo.gy/fyb\">http://netolo.gy/fyb</a>",
         published = "21 мая в 18:36",
@@ -19,7 +19,7 @@ class PostRepositoryInMemoryImpl: PostRepository {
         likedByMe = false,
         video = "https://www.youtube.com/watch?v=WhWc3b3KhnY"
     ), Post(
-        id = 1,
+        id = 1L,
         author = "Нетология. Университет интернет-пофессий будущего",
         content = "Второй пост про нетологию",
         published = "22 мая в 18:36",
@@ -31,6 +31,10 @@ class PostRepositoryInMemoryImpl: PostRepository {
 
     private val data = MutableLiveData(posts)
     override fun getAll(): LiveData<List<Post>> = data
+    override fun getById(id: Long): Post? {
+        return posts.find { it.id == id }
+    }
+
     override fun likeById(id: Long) {
         posts = posts.map {
             if(it.id != id) it else it.copy(likedByMe = !it.likedByMe, likes = if(it.likedByMe) it.likes - 1 else it.likes + 1)

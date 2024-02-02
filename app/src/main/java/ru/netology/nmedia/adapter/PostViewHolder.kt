@@ -37,6 +37,18 @@ class PostViewHolder(
                 videoGroup.visibility = View.GONE
             }
 
+            tvContent.setOnClickListener {
+                onInteractionListener.onOpen(post)
+            }
+
+            tvAuthor.setOnClickListener {
+                onInteractionListener.onOpen(post)
+            }
+
+            tvPublished.setOnClickListener {
+                onInteractionListener.onOpen(post)
+            }
+
             like.setOnClickListener {
                 onInteractionListener.onLike(post)
             }

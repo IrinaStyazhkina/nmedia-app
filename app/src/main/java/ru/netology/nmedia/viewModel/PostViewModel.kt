@@ -48,6 +48,8 @@ class PostViewModel(application: Application): AndroidViewModel(application) {
             _edited.value = it.copy(content = text)
         }
     }
+
+    fun getById(id: Long) = repository.getById(id)
     fun likeById(id: Long) = repository.likeById(id)
     fun shareById(id: Long) = repository.shareById(id)
     fun removeById(id: Long) = repository.removeById(id)
