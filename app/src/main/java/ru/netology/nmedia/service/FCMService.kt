@@ -50,7 +50,7 @@ class FCMService: FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        println(token)
+        println("new token")
     }
 
     private fun handleLike(content: Like) {
