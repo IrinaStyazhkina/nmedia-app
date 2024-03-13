@@ -32,4 +32,8 @@
     <string name="chooser_play_video">Play video</string>
     <string name="video_img">Video image</string>
     <string name="play_video">Play video</string>
+    <string name="channel_remote_name">Server notifications</string>
+    <string name="channel_remote_description">Notifications from remote server</string>
+    <string name="notification_user_liked">%1$s liked post %2$s</string>
+    <string name="notification_user_added_post">%1$s added new post</string>
 </resources>
