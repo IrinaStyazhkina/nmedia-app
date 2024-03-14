@@ -37,4 +37,7 @@
     <string name="channel_remote_description">Уведомления с удалённого сервера</string>
     <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
     <string name="notification_user_added_post">%1$s опубликовал новый пост</string>
+    <string name="error_loading">Что-то пошло не так. Попробуйте позже</string>
+    <string name="retry_loading">Попробовать снова</string>
+    <string name="empty_posts">Постов пока нет\nЕсли вы создадите новый пост, он появится здесь</string>
 </resources>
