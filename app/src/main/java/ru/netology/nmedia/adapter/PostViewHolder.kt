@@ -1,11 +1,10 @@
 package ru.netology.nmedia.adapter
 
 import android.text.Html
-import android.view.View
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.OnInteractionListener
-import ru.netology.nmedia.Post
+import ru.netology.nmedia.model.Post
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.formatCount
@@ -21,21 +20,8 @@ class PostViewHolder(
             tvContent.text = Html.fromHtml(post.content)
             like.text = formatCount(post.likes)
             share.text = formatCount(post.shares)
-            tvSeen.text = formatCount(post.seen)
 
             like.isChecked = post.likedByMe
-
-            if (post.video != null) {
-                videoGroup.visibility = View.VISIBLE
-                videoImg.setOnClickListener {
-                   onInteractionListener.onPlay(post)
-                }
-                play.setOnClickListener {
-                    onInteractionListener.onPlay(post)
-                }
-            } else {
-                videoGroup.visibility = View.GONE
-            }
 
             tvContent.setOnClickListener {
                 onInteractionListener.onOpen(post)

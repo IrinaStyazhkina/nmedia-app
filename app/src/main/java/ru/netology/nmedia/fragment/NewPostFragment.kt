@@ -46,6 +46,10 @@ class NewPostFragment() : Fragment() {
             viewModel.changeContent(binding.content.text.toString())
             viewModel.save()
             hideKeyboard(binding.root)
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
             intermediateText = null
             findNavController().navigateUp()
         }
