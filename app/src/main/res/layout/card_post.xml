@@ -70,14 +70,28 @@
         android:id="@+id/tvContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="@string/mock_content"
         android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginBottom="@dimen/common_spacing"
-        app:layout_constraintTop_toBottomOf="@id/headerBarrier"
-        app:layout_constraintBottom_toTopOf="@id/videoImg"
         android:justificationMode="inter_word"
         android:textColorLink="@color/blue"
+        app:layout_constraintTop_toBottomOf="@id/headerBarrier"
+        tools:layout_editor_absoluteX="8dp"
+        tools:text="@string/mock_content" />
+
+    <ImageView
+        android:id="@+id/attachmentImg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/attachment_img"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:layout_marginBottom="@dimen/common_spacing"
+        app:layout_constraintTop_toBottomOf="@id/tvContent"
+        app:layout_constraintBottom_toTopOf="@id/contentBarrier"
         />
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/videoGroup"
         android:layout_width="wrap_content"
