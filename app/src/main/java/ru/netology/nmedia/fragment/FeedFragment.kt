@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -61,6 +62,19 @@ class FeedFragment : Fragment() {
             binding.errorGroup.isVisible = state.error
             binding.emptyText.isVisible = state.empty
         }
+
+        viewModel.postDeleted.observe(viewLifecycleOwner) {
+            if (it == false) {
+                Toast.makeText(activity, R.string.error_deleting, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        viewModel.postLikeChanged.observe(viewLifecycleOwner) {
+            if (it == false) {
+                Toast.makeText(activity, R.string.error_loading, Toast.LENGTH_LONG).show()
+            }
+        }
+
 
         binding.retryButton.setOnClickListener {
             viewModel.loadPosts()
