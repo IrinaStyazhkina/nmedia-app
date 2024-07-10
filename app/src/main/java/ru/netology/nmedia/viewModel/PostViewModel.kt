@@ -26,9 +26,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val data: LiveData<FeedModel>
         get() = _data
 
-    private val _postCreated = SingleLiveEvent<Unit>()
-    val postCreated: LiveData<Unit>
+    private val _postCreated = SingleLiveEvent<Boolean>()
+    val postCreated: LiveData<Boolean>
         get() = _postCreated
+
+    private val _postDeleted = SingleLiveEvent<Boolean>()
+    val postDeleted: LiveData<Boolean>
+        get() = _postDeleted
+
+    private val _postLikeChanged = SingleLiveEvent<Boolean>()
+    val postLikeChanged: LiveData<Boolean>
+        get() = _postLikeChanged
 
     private val _edited = MutableLiveData(empty)
     val edited: LiveData<Post>
@@ -42,11 +50,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         _data.postValue(FeedModel(loading = true))
         repository.getAllAsync(object : PostRepository.PostsCallback<List<Post>> {
             override fun onSuccess(data: List<Post>) {
-                _data.postValue(FeedModel(posts = data, empty = data.isEmpty()))
+                _data.value = FeedModel(posts = data, empty = data.isEmpty())
             }
 
             override fun onError(throwable: Throwable) {
-                _data.postValue(FeedModel(error = true))
+                _data.value = FeedModel(error = true)
             }
         })
     }
@@ -57,10 +65,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 it.copy(author = "Netology"),
                 object : PostRepository.PostsCallback<Post> {
                     override fun onSuccess(data: Post) {
-                        _postCreated.postValue(Unit)
+                        _postCreated.postValue(true)
                     }
 
-                    override fun onError(throwable: Throwable) {}
+                    override fun onError(throwable: Throwable) {
+                        _postCreated.postValue(false)
+                    }
                 })
         }
         _edited.value = empty
@@ -86,19 +96,22 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun likeById(id: Long) {
         val old = _data.value?.posts.orEmpty()
-        _data.postValue(
+        _data.value =
             _data.value?.copy(posts = _data.value?.posts.orEmpty().map {
                 if (it.id != id) it else it.copy(
                     likes = if (it.likedByMe) it.likes - 1 else it.likes + 1,
                     likedByMe = !it.likedByMe
                 )
-            })
+            }
         )
 
         repository.likeByIdAsync(id, object : PostRepository.PostsCallback<Post> {
-            override fun onSuccess(data: Post) {}
+            override fun onSuccess(data: Post) {
+                _postLikeChanged.postValue(true)
+            }
             override fun onError(throwable: Throwable) {
-                _data.postValue(_data.value?.copy(posts = old))
+                _data.value = _data.value?.copy(posts = old)
+                _postLikeChanged.postValue(false)
             }
         })
     }
@@ -111,10 +124,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         _data.postValue(FeedModel(posts = newPosts, empty = newPosts.isEmpty()))
 
         repository.removeByIdAsync(id, object : PostRepository.PostsCallback<Unit> {
-            override fun onSuccess(data: Unit) {}
+            override fun onSuccess(data: Unit) {
+                _postDeleted.postValue(true)
+            }
 
             override fun onError(throwable: Throwable) {
-                _data.postValue(_data.value?.copy(posts = old))
+                _data.value = _data.value?.copy(posts = old)
+                _postDeleted.postValue(false)
             }
         })
     }

@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.utils.AndroidUtils.hideKeyboard
 import ru.netology.nmedia.utils.StringArg
@@ -49,9 +51,13 @@ class NewPostFragment() : Fragment() {
         }
 
         viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
-            intermediateText = null
-            findNavController().navigateUp()
+            if (it == true) {
+                viewModel.loadPosts()
+                intermediateText = null
+                findNavController().navigateUp()
+            } else {
+                Toast.makeText(activity, R.string.error_loading, Toast.LENGTH_LONG).show()
+            }
         }
 
         binding.cancelButton.setOnClickListener {
