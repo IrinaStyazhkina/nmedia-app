@@ -9,6 +9,5 @@ data class Post(
     val likes: Int = 0,
     val shares: Int = 0,
     val likedByMe: Boolean = false,
-    val isTemporary: Boolean = false,
     val attachment: Attachment? = null,
     )

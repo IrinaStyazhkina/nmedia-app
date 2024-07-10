@@ -77,8 +77,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 _edited.value?.let {
-                    val newPost = it.copy(author = "Netology", isTemporary = true)
-                    repository.saveAsync(newPost.copy(isTemporary = false))
+                    repository.saveAsync(it.copy(author = "Netology"))
                     _postCreated.postValue(true)
                 }
                 _edited.value = empty
