@@ -10,4 +10,4 @@ data class Post(
     val shares: Int = 0,
     val likedByMe: Boolean = false,
     val attachment: Attachment? = null,
-)
+    )

@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.OnInteractionListener
 import ru.netology.nmedia.model.Post
 import ru.netology.nmedia.R
@@ -57,31 +57,40 @@ class FeedFragment : Fragment() {
 
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
-            binding.progress.isVisible = state.loading
-            binding.swipeRefresh.isRefreshing = false
-            binding.errorGroup.isVisible = state.error
             binding.emptyText.isVisible = state.empty
         }
 
-        viewModel.postDeleted.observe(viewLifecycleOwner) {
-            if (it == false) {
-                Toast.makeText(activity, R.string.error_deleting, Toast.LENGTH_LONG).show()
+        viewModel.state.observe(viewLifecycleOwner) {state ->
+            binding.progress.isVisible = state.loading
+            binding.swipeRefresh.isRefreshing = state.refreshing
+            if(state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.retry_loading) {
+                        viewModel.refresh()
+                    }
+                    .show()
+            }
+        }
+
+        viewModel.postDeleted.observe(viewLifecycleOwner) { data ->
+            if (!data.isSuccessful) {
+                Snackbar.make(binding.root, R.string.error_deleting, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.retry_loading) {
+                        viewModel.removeById(data.id)
+                    }
+                    .show()
             }
         }
 
         viewModel.postLikeChanged.observe(viewLifecycleOwner) {
             if (it == false) {
-                Toast.makeText(activity, R.string.error_loading, Toast.LENGTH_LONG).show()
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_SHORT)
+                    .show()
             }
         }
 
-
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
-        }
-
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.loadPosts()
+            viewModel.refresh()
         }
 
         binding.fab.setOnClickListener {
