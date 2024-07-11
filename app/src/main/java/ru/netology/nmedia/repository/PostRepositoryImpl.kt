@@ -35,7 +35,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
                 PostApiService.service.likeById(id)
             }
         } catch (e: Exception) {
-            postDao.save(data)
+            postDao.likeById(id)
             throw e
         }
     }
