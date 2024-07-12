@@ -124,7 +124,6 @@ class FeedFragment : Fragment() {
 
         binding.newPosts.setOnClickListener {
             viewModel.readAllPosts()
-            binding.newPosts.visibility = GONE
         }
 
         return binding.root
