@@ -1,6 +1,7 @@
 package ru.netology.nmedia.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
+import androidx.recyclerview.widget.RecyclerView.GONE
+import androidx.recyclerview.widget.RecyclerView.VISIBLE
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.OnInteractionListener
 import ru.netology.nmedia.model.Post
@@ -95,6 +99,32 @@ class FeedFragment : Fragment() {
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+        }
+
+        adapter.registerAdapterDataObserver(object : AdapterDataObserver(){
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if(positionStart == 0) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
+        })
+
+        viewModel.newerCount.observe(viewLifecycleOwner) {
+            Log.d("Posts count", "New posts count: $it")
+            viewModel.getUnreadPostsCount()
+        }
+
+        viewModel.postHiddenCountChanged.observe(viewLifecycleOwner) {
+            if(it > 0) {
+                binding.newPosts.visibility = VISIBLE
+            } else {
+                binding.newPosts.visibility = GONE
+            }
+        }
+
+        binding.newPosts.setOnClickListener {
+            viewModel.readAllPosts()
+            binding.newPosts.visibility = GONE
         }
 
         return binding.root

@@ -41,4 +41,5 @@
     <string name="retry_loading">Retry</string>
     <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
     <string name="attachment_img">Post image</string>
+    <string name="new_posts">New Posts</string>
 </resources>

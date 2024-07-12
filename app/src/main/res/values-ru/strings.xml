@@ -42,4 +42,5 @@
     <string name="retry_loading">Попробовать снова</string>
     <string name="empty_posts">Постов пока нет\nЕсли вы создадите новый пост, он появится здесь</string>
     <string name="attachment_img">Картинка поста</string>
+    <string name="new_posts">Свежие записи</string>
 </resources>

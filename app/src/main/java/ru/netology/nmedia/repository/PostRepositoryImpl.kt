@@ -1,7 +1,12 @@
 package ru.netology.nmedia.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import ru.netology.nmedia.api.PostApiService
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.entity.PostEntity
@@ -10,9 +15,26 @@ import java.lang.RuntimeException
 import kotlin.Exception
 
 class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
-    override val data: LiveData<List<Post>> = postDao.getAll().map {
+    override val data: Flow<List<Post>> = postDao.getAll().map {
         it.map(PostEntity::toDto)
-    }
+    }.flowOn(Dispatchers.Default)
+
+    override fun getNewerCount(postId: Long): Flow<Int> =
+        flow {
+            while (true) {
+                try {
+                    delay(10_000)
+
+                    val newerPosts = PostApiService.service.getNewer(postId)
+                    postDao.insert(newerPosts.map { PostEntity.fromDto(it).copy(hidden = true) })
+                    emit(newerPosts.size)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
 
     override suspend fun getAllAsync() {
         val posts = PostApiService.service.getAll()
@@ -60,6 +82,23 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             post
+        }
+    }
+
+    override suspend fun readAllPosts() {
+        try {
+            postDao.readAll()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override suspend fun getUnreadCount(): Int {
+        return try {
+            postDao.getUnreadCount()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            0
         }
     }
 }
