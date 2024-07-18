@@ -40,6 +40,9 @@ interface PostApi {
     @GET("posts")
     suspend fun getAll(): List<Post>
 
+    @GET("posts/{id}/newer")
+    suspend fun getNewer(@Path("id") id: Long): List<Post>
+
     @GET("posts/{id}")
     suspend fun getById(@Path("id") id: Long): Post
 

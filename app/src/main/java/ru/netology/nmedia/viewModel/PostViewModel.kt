@@ -4,8 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.model.Post
@@ -38,7 +41,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             posts = it,
             empty = it.isEmpty()
         )
+    }.asLiveData(Dispatchers.Default)
+
+    val newerCount: LiveData<Int> = data.switchMap {
+        val firstId = it.posts.firstOrNull()?.id ?: 0L
+
+        repository.getNewerCount(firstId)
+            .asLiveData(Dispatchers.Default)
     }
+
 
     private val _postCreated = SingleLiveEvent<Boolean>()
     val postCreated: LiveData<Boolean>
@@ -55,6 +66,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _edited = MutableLiveData(empty)
     val edited: LiveData<Post>
         get() = _edited
+
+    private val _postHiddenCountChanged = SingleLiveEvent<Int>()
+    val postHiddenCountChanged: LiveData<Int>
+        get() = _postHiddenCountChanged
 
     init {
         loadPosts()
@@ -146,9 +161,24 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 repository.getAllAsync()
                 _state.value = FeedModelState()
+                _postHiddenCountChanged.postValue(0)
             } catch (e: Exception) {
                 _state.value = FeedModelState(refreshing = false, error = true)
             }
+        }
+    }
+
+    fun readAllPosts() {
+        viewModelScope.launch {
+            repository.readAllPosts()
+            _postHiddenCountChanged.postValue(0)
+        }
+    }
+
+    fun getUnreadPostsCount() {
+        viewModelScope.launch{
+            val count = repository.getUnreadCount()
+            _postHiddenCountChanged.postValue(count)
         }
     }
 }

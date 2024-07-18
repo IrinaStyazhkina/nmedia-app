@@ -19,4 +19,10 @@
     <style name="Widget.AppTheme.MenuButton" parent="Widget.AppTheme.IconButton">
         <item name="iconPadding">0dp</item>
     </style>
+
+    <style name="Widget.AppTheme.BaseButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/blue</item>
+        <item name="iconTint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>
