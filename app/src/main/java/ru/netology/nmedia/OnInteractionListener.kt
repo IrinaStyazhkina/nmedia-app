@@ -1,5 +1,6 @@
 package ru.netology.nmedia
 
+import ru.netology.nmedia.model.Attachment
 import ru.netology.nmedia.model.Post
 
 interface OnInteractionListener {
@@ -8,4 +9,5 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onOpen(post: Post) {}
+    fun onClickPhoto(attachment: Attachment){}
 }

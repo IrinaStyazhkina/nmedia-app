@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,24 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".fragment.NewPostFragment"
     >
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-
-        <ImageButton
-            android:id="@+id/cancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:padding="@dimen/small_spacing"
-            android:src="@drawable/baseline_close_36"
-            android:contentDescription="@string/cancel_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/grey" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="?actionBarSize"
+        >
 
     <EditText
         android:id="@+id/content"
@@ -38,22 +32,55 @@
         android:inputType="none|text|textCapWords|textUri|textMultiLine"
         android:padding="@dimen/common_spacing"
         android:layout_marginTop="@dimen/top_margin"
+        tools:text="@tools:sample/lorem[129]"
         />
+        <FrameLayout
+            android:id="@+id/photoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            >
+            <ImageView
+                android:id="@+id/photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                tools:srcCompat="@tools:sample/avatars[21]"
+                />
+            <Button
+                android:id="@+id/removeAttachment"
+                android:text="@string/remove"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </FrameLayout>
+    </LinearLayout>
+    </ScrollView>
     
-    <com.google.android.material.bottomappbar.BottomAppBar
+    <LinearLayout
+        android:orientation="horizontal"
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
-        />
-    
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/bottomAppBar"
-        android:contentDescription="@string/save_button"
-        app:srcCompat="@drawable/baseline_check_24"
-        />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:background="?colorPrimary"
+        >
+        <ImageView
+            android:id="@+id/gallery"
+            android:padding="@dimen/common_spacing"
+            android:background="?selectableItemBackground"
+            app:srcCompat="@drawable/baseline_image_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <ImageView
+            android:id="@+id/takePhoto"
+            android:padding="@dimen/common_spacing"
+            android:background="?selectableItemBackground"
+            app:srcCompat="@drawable/baseline_add_a_photo_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+</FrameLayout>

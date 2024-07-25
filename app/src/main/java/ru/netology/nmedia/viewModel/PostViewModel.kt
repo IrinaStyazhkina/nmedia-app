@@ -1,6 +1,7 @@
 package ru.netology.nmedia.viewModel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,10 +15,12 @@ import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.model.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
+import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.PostDeletedData
 import ru.netology.nmedia.utils.SingleLiveEvent
+import java.io.File
 
 private val empty = Post(
     id = 0,
@@ -30,11 +33,16 @@ private val empty = Post(
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: PostRepository = PostRepositoryImpl(AppDb.getInstance(application).postDao())
+    private val repository: PostRepository =
+        PostRepositoryImpl(AppDb.getInstance(application).postDao())
 
     private val _state = MutableLiveData(FeedModelState())
-    val state:LiveData<FeedModelState>
+    val state: LiveData<FeedModelState>
         get() = _state
+
+    private val _photo = MutableLiveData<PhotoModel?>()
+    val photo: LiveData<PhotoModel?>
+        get() = _photo
 
     val data: LiveData<FeedModel> = repository.data.map {
         FeedModel(
@@ -88,17 +96,27 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun setPhoto(uri: Uri, file: File) {
+        _photo.value = PhotoModel(uri, file)
+    }
+
+    fun clearPhoto() {
+        _photo.value = null
+    }
+
     fun save() {
         viewModelScope.launch {
-            try {
-                _edited.value?.let {
-                    repository.saveAsync(it.copy(author = "Netology"))
+            _edited.value?.let { post ->
+                try {
+                    photo.value?.let {
+                        repository.saveAsyncWithAttachment(post.copy(author = "Netology"), it)
+                    } ?: repository.saveAsync(post.copy(author = "Netology"))
                     _postCreated.postValue(true)
+                    _edited.value = empty
+                    _photo.value = null
+                } catch (e: Exception) {
+                    _postCreated.postValue(false)
                 }
-                _edited.value = empty
-            }
-            catch (e: Exception) {
-                _postCreated.postValue(false)
             }
         }
     }
@@ -138,16 +156,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 repository.removeByIdAsync(id)
                 _postDeleted.postValue(
                     PostDeletedData(
-                    isSuccessful = true,
-                    id
-                )
+                        isSuccessful = true,
+                        id
+                    )
                 )
             } catch (e: Exception) {
                 _postDeleted.postValue(
                     PostDeletedData(
-                    isSuccessful = false,
-                    id
-                )
+                        isSuccessful = false,
+                        id
+                    )
                 )
             }
         }
@@ -176,7 +194,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getUnreadPostsCount() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             val count = repository.getUnreadCount()
             _postHiddenCountChanged.postValue(count)
         }
