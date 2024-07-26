@@ -34,10 +34,15 @@ class PostViewHolder(
             } else {
                 if(post.attachment.type == AttachmentType.IMAGE){
                     attachmentImg.visibility = View.VISIBLE
-                    attachmentImg.loadContentImage("${BASE_URL}/images/${post.attachment.url}")
+                    attachmentImg.loadContentImage("${BASE_URL}/media/${post.attachment.url}")
                     attachmentImg.contentDescription = post.attachment.description
+                    attachmentImg.setOnClickListener{
+                        onInteractionListener.onClickPhoto(post.attachment)
+                    }
                 }
             }
+
+
 
             tvContent.setOnClickListener {
                 onInteractionListener.onOpen(post)

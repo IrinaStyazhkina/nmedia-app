@@ -18,7 +18,9 @@ import ru.netology.nmedia.model.Post
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
+import ru.netology.nmedia.fragment.AttachmentFragment.Companion.urlArg
 import ru.netology.nmedia.fragment.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.model.Attachment
 import ru.netology.nmedia.viewModel.PostViewModel
 
 class FeedFragment : Fragment() {
@@ -53,6 +55,16 @@ class FeedFragment : Fragment() {
                         R.id.action_feedFragment_to_newPostFragment,
                         Bundle().apply {
                             textArg = post.content
+                        }
+                    )
+            }
+
+            override fun onClickPhoto(attachment: Attachment) {
+                findNavController()
+                    .navigate(
+                        R.id.action_feedFragment_to_attachmentFragment,
+                        Bundle().apply {
+                            urlArg = attachment.url
                         }
                     )
             }

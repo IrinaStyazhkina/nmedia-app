@@ -7,9 +7,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostApiService
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.entity.PostEntity
+import ru.netology.nmedia.model.Attachment
+import ru.netology.nmedia.model.AttachmentType
+import ru.netology.nmedia.model.Media
+import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.model.Post
 import java.lang.RuntimeException
 import kotlin.Exception
@@ -83,6 +89,30 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
             e.printStackTrace()
             post
         }
+    }
+
+    override suspend fun saveAsyncWithAttachment(post: Post, model: PhotoModel): Post {
+        return try {
+            val media = upload(model)
+            val created = PostApiService.service.save(post.copy(attachment = Attachment(
+                url = media.id,
+                type = AttachmentType.IMAGE,
+                description = "",
+            )))
+            postDao.save(PostEntity.fromDto(created))
+            created
+        } catch (e: Exception) {
+            e.printStackTrace()
+            post
+        }
+    }
+
+    private suspend fun upload(photoModel: PhotoModel): Media {
+        val part = MultipartBody.Part.createFormData("file",
+            photoModel.file.name,
+            photoModel.file.asRequestBody())
+
+        return PostApiService.service.saveMedia(part)
     }
 
     override suspend fun readAllPosts() {
