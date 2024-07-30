@@ -2,15 +2,28 @@ package ru.netology.nmedia.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.fragment.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.fragment.SignOutDialogFragment
+import ru.netology.nmedia.viewModel.AuthViewModel
 
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
+
+    val viewModel by viewModels<AuthViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,6 +46,51 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                     }
                 )
         }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.data.collect{
+                    invalidateOptionsMenu()
+                }
+            }
+        }
+
+        addMenuProvider(object : MenuProvider{
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.main_menu, menu)
+            }
+
+            override fun onPrepareMenu(menu: Menu) {
+                menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
+                menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when(menuItem.itemId) {
+                    R.id.signin -> {
+                        findNavController(R.id.nav_host_fragment)
+                            .navigate(
+                                R.id.action_to_signinFragment,
+                            )
+                        true
+                    }
+                    R.id.signup -> {
+                        findNavController(R.id.nav_host_fragment)
+                            .navigate(
+                                R.id.action_to_signupFragment
+                            )
+                        true
+                    }
+                    R.id.signout -> {
+                        SignOutDialogFragment().show(
+                            supportFragmentManager, SignOutDialogFragment.TAG)
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+        })
         checkGoogleApiAvailability()
     }
 

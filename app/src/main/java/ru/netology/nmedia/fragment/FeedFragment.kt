@@ -41,7 +41,12 @@ class FeedFragment : Fragment() {
         )
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                if (viewModel.authenticated) {
+                    viewModel.likeById(post.id)
+                } else {
+                    SignInDialogFragment().show(
+                        childFragmentManager, SignInDialogFragment.TAG)
+                }
             }
 
             override fun onRemove(post: Post) {
@@ -110,7 +115,12 @@ class FeedFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            if (viewModel.authenticated) {
+                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            } else {
+                SignInDialogFragment().show(
+                    childFragmentManager, SignInDialogFragment.TAG)
+            }
         }
 
         adapter.registerAdapterDataObserver(object : AdapterDataObserver(){

@@ -5,7 +5,10 @@
     <dimen name="small_spacing">8dp</dimen>
     <dimen name="logo_size">48dp</dimen>
     <dimen name="icon_size">24dp</dimen>
+    <dimen name="header_size">24sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="top_margin">36dp</dimen>
+    <dimen name="top_margin_login">240dp</dimen>
+    <dimen name="top_margin_registration">140dp</dimen>
     <dimen name="big_image_size">152dp</dimen>
 </resources>
