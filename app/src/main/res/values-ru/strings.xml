@@ -44,4 +44,19 @@
     <string name="empty_posts">Постов пока нет\nЕсли вы создадите новый пост, он появится здесь</string>
     <string name="attachment_img">Картинка поста</string>
     <string name="new_posts">Свежие записи</string>
+    <string name="sign_in">Войти</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="sign_out">Выйти</string>
+    <string name="login">Логин</string>
+    <string name="login_not_empty">Поле Логин не может быть пустым</string>
+    <string name="password">Пароль</string>
+    <string name="password_not_empty">Поле Пароль не может быть пустым</string>
+    <string name="password_repeat_error">Пароли должны совпадать</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="error_sign_in">Ошибка авторизации</string>
+    <string name="sign_in_alert">Авторизуйтесь, чтобы продолжить</string>
+    <string name="sign_out_alert">Вы уверены?</string>
+    <string name="close">Закрыть</string>
+    <string name="name">Имя</string>
+    <string name="name_not_empty">Поле Имя не может быть пустым</string>
 </resources>

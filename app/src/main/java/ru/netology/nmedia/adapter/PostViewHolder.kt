@@ -3,6 +3,7 @@ package ru.netology.nmedia.adapter
 import android.text.Html
 import android.view.View
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.BASE_URL
 import ru.netology.nmedia.OnInteractionListener
@@ -63,6 +64,8 @@ class PostViewHolder(
             share.setOnClickListener {
                 onInteractionListener.onShare(post)
             }
+
+            menu.isVisible = post.ownedByMe
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {

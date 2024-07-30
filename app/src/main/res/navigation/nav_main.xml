@@ -16,14 +16,50 @@
         <action
             android:id="@+id/action_feedFragment_to_attachmentFragment"
             app:destination="@id/attachmentFragment" />
+        <action
+            android:id="@+id/action_to_signinFragment"
+            app:destination="@id/signinFragment" />
+        <action
+            android:id="@+id/action_to_signupFragment"
+            app:destination="@id/signupFragment" />
     </fragment>
     <fragment
         android:id="@+id/newPostFragment"
         android:name="ru.netology.nmedia.fragment.NewPostFragment"
         android:label="fragment_new_post"
-        tools:layout="@layout/fragment_new_post" />
+        tools:layout="@layout/fragment_new_post">
+        <action
+            android:id="@+id/action_to_signinFragment"
+            app:destination="@id/signinFragment" />
+        <action
+            android:id="@+id/action_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
     <fragment
         android:id="@+id/attachmentFragment"
         android:name="ru.netology.nmedia.fragment.AttachmentFragment"
-        android:label="AttachmentFragment" />
+        android:label="AttachmentFragment">
+        <action
+            android:id="@+id/action_to_signinFragment"
+            app:destination="@id/signinFragment" />
+        <action
+            android:id="@+id/action_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signinFragment"
+        android:name="ru.netology.nmedia.fragment.SigninFragment"
+        android:label="SigninFragment" >
+        <action
+            android:id="@+id/action_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="ru.netology.nmedia.fragment.SignUpFragment"
+        android:label="SignupFragment" >
+        <action
+            android:id="@+id/action_to_signinFragment"
+            app:destination="@id/signinFragment" />
+    </fragment>
 </navigation>

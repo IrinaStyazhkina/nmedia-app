@@ -43,4 +43,19 @@
     <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
     <string name="attachment_img">Post image</string>
     <string name="new_posts">New Posts</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_out">Sign out</string>
+    <string name="login">Login</string>
+    <string name="login_not_empty">Login can not be empty</string>
+    <string name="password">Password</string>
+    <string name="password_not_empty">Password can not be empty</string>
+    <string name="password_repeat_error">Passwords must be equal</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="error_sign_in">Authorization error</string>
+    <string name="sign_in_alert">Sign In to continue</string>
+    <string name="sign_out_alert">Are you sure?</string>
+    <string name="close">Close</string>
+    <string name="name">Name</string>
+    <string name="name_not_empty">Name can not be empty</string>
 </resources>

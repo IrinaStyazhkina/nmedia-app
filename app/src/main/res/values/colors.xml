@@ -5,6 +5,7 @@
     <color name="blue">#32A89E</color>
     <color name="grey">#858181</color>
     <color name="red">#b30000</color>
+    <color name="light_pink">#EAE9EB</color>
     <color name="my_dark_primary">#9B59B6</color>
     <color name="my_light_primary">#BE90D4</color>
 </resources>
