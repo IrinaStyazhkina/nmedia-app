@@ -14,6 +14,8 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.model.Action
 import ru.netology.nmedia.R
+import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.model.PushMessage
 import java.util.logging.Logger
 import kotlin.random.Random
 
@@ -39,18 +41,26 @@ class FCMService: FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        message.data["action"]?.let {
-            when(Action.lookup(it)) {
-                Action.LIKE -> handleLike(gson.fromJson(message.data["content"], Like::class.java))
-                Action.NEW_POST -> handleNewPost(gson.fromJson(message.data["content"], NewPost::class.java))
-                Action.UNKNOWN -> logger.warning("Unknown Action type received")
+        val recipient = Gson().fromJson(message.data["content"], PushMessage::class.java).recipientId
+        val userId = AppAuth.getInstance().authState.value.id
+        when (recipient) {
+            userId, null -> {
+                message.data["action"]?.let {
+                    when(Action.lookup(it)) {
+                        Action.LIKE -> handleLike(gson.fromJson(message.data["content"], Like::class.java))
+                        Action.NEW_POST -> handleNewPost(gson.fromJson(message.data["content"], NewPost::class.java))
+                        Action.UNKNOWN -> logger.warning("Unknown Action type received")
+                    }
+                }
+            }
+            else -> {
+                AppAuth.getInstance().sendPushToken()
             }
         }
-        println(Gson().toJson(message))
     }
 
     override fun onNewToken(token: String) {
-        println("new token")
+        AppAuth.getInstance().sendPushToken(token)
     }
 
     private fun handleLike(content: Like) {
