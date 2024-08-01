@@ -6,19 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentSignupBinding
 import ru.netology.nmedia.viewModel.SignupViewModel
 
+@AndroidEntryPoint
+
 class SignUpFragment: Fragment() {
 
+    private val viewModel: SignupViewModel by activityViewModels()
 
-    private val viewModel: SignupViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

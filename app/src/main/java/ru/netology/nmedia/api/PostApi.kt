@@ -1,7 +1,6 @@
 package ru.netology.nmedia.api
 
 import okhttp3.MultipartBody
-import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -39,10 +38,4 @@ interface PostApi {
     @Multipart
     @POST("media")
     suspend fun saveMedia(@Part part: MultipartBody.Part): Media
-}
-
-object PostApiService {
-    val service: PostApi by lazy {
-        retrofit.create()
-    }
 }

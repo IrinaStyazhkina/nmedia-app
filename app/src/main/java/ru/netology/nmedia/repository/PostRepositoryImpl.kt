@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import ru.netology.nmedia.api.PostApiService
+import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.model.Attachment
@@ -18,9 +18,13 @@ import ru.netology.nmedia.model.Media
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.model.Post
 import java.lang.RuntimeException
+import javax.inject.Inject
 import kotlin.Exception
 
-class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
+class PostRepositoryImpl @Inject constructor(
+    private val postDao: PostDao,
+    private val postApiService: PostApi,
+    ) : PostRepository {
     override val data: Flow<List<Post>> = postDao.getAll().map {
         it.map(PostEntity::toDto)
     }.flowOn(Dispatchers.Default)
@@ -31,7 +35,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
                 try {
                     delay(10_000)
 
-                    val newerPosts = PostApiService.service.getNewer(postId)
+                    val newerPosts = postApiService.getNewer(postId)
                     postDao.insert(newerPosts.map { PostEntity.fromDto(it).copy(hidden = true) })
                     emit(newerPosts.size)
                 } catch (e: CancellationException) {
@@ -43,7 +47,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
         }
 
     override suspend fun getAllAsync() {
-        val posts = PostApiService.service.getAll()
+        val posts = postApiService.getAll()
         postDao.insert(posts.map {
             PostEntity.fromDto(it)
         })
@@ -58,9 +62,9 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
         return try {
             postDao.likeById(id)
             if (data.likedByMe) {
-                PostApiService.service.unlikeById(id)
+                postApiService.unlikeById(id)
             } else {
-                PostApiService.service.likeById(id)
+                postApiService.likeById(id)
             }
         } catch (e: Exception) {
             postDao.likeById(id)
@@ -73,7 +77,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
         val data = postDao.getById(id) ?: throw RuntimeException("No post with provided id")
         try {
             postDao.removeById(id)
-            PostApiService.service.deleteById(id)
+            postApiService.deleteById(id)
         } catch (e: Exception) {
             postDao.insert(data)
             throw e
@@ -82,7 +86,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
 
     override suspend fun saveAsync(post: Post): Post {
         return try {
-            val created = PostApiService.service.save(post)
+            val created = postApiService.save(post)
             postDao.save(PostEntity.fromDto(created))
             created
         } catch (e: Exception) {
@@ -94,7 +98,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
     override suspend fun saveAsyncWithAttachment(post: Post, model: PhotoModel): Post {
         return try {
             val media = upload(model)
-            val created = PostApiService.service.save(post.copy(attachment = Attachment(
+            val created = postApiService.save(post.copy(attachment = Attachment(
                 url = media.id,
                 type = AttachmentType.IMAGE,
                 description = "",
@@ -112,7 +116,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
             photoModel.file.name,
             photoModel.file.asRequestBody())
 
-        return PostApiService.service.saveMedia(part)
+        return postApiService.saveMedia(part)
     }
 
     override suspend fun readAllPosts() {

@@ -1,6 +1,5 @@
 package ru.netology.nmedia.api
 
-import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -19,10 +18,4 @@ interface UserApi {
 
     @POST("users/push-tokens")
     suspend fun sendPushToken(@Body token: PushToken)
-}
-
-object UserApiService {
-    val service: UserApi by lazy {
-        retrofit.create()
-    }
 }

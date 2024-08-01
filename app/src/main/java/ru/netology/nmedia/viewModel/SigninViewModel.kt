@@ -1,21 +1,22 @@
 package ru.netology.nmedia.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.UserRepository
-import ru.netology.nmedia.repository.UserRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
+import javax.inject.Inject
 
-class SigninViewModel(application: Application) : AndroidViewModel(application)  {
-
-    private val repository: UserRepository = UserRepositoryImpl()
-
+@HiltViewModel
+class SigninViewModel @Inject constructor(
+    private val appAuth: AppAuth,
+    private val userRepository: UserRepository,
+    ) : ViewModel()  {
     private val _state = MutableLiveData(FeedModelState())
     val state: LiveData<FeedModelState>
         get() = _state
@@ -28,9 +29,9 @@ class SigninViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             _state.value = FeedModelState(loading = true)
             try {
-                val result = repository.doLogin(login, password)
+                val result = userRepository.doLogin(login, password)
                 if(result.id != null && result.token != null) {
-                    AppAuth.getInstance().setAuth(result.id, result.token)
+                    appAuth.setAuth(result.id, result.token)
                 }
                 _userAuthorized.postValue(true)
                 _state.value = FeedModelState()
