@@ -15,15 +15,16 @@ import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.utils.AndroidUtils.hideKeyboard
 import ru.netology.nmedia.utils.StringArg
 import ru.netology.nmedia.viewModel.PostViewModel
-
+@AndroidEntryPoint
 class NewPostFragment() : Fragment() {
 
     companion object {
@@ -31,9 +32,7 @@ class NewPostFragment() : Fragment() {
         var intermediateText: String? = null
     }
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    private val viewModel: PostViewModel by activityViewModels()
 
     private val photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if(it.resultCode != Activity.RESULT_OK) {

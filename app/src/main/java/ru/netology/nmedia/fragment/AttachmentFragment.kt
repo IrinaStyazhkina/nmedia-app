@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.BASE_URL
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentAttachmentBinding
 import ru.netology.nmedia.handler.loadContentImage
 import ru.netology.nmedia.utils.StringArg
 
+@AndroidEntryPoint
 class AttachmentFragment(): Fragment() {
 
     companion object {

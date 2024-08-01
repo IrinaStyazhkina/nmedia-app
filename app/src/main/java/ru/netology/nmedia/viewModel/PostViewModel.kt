@@ -1,28 +1,28 @@
 package ru.netology.nmedia.viewModel
 
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.model.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.PostDeletedData
 import ru.netology.nmedia.utils.SingleLiveEvent
 import java.io.File
+import javax.inject.Inject
 
 private val empty = Post(
     id = 0,
@@ -34,12 +34,14 @@ private val empty = Post(
     authorAvatar = "",
 )
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
+@OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    private val postRepository: PostRepository,
+    appAuth: AppAuth,
+) : ViewModel() {
 
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(application).postDao())
-
-    val authData = AppAuth.getInstance().authState
+    val authData = appAuth.authState
 
     val authenticated: Boolean
         get() = authData.value.id != 0L
@@ -52,10 +54,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val photo: LiveData<PhotoModel?>
         get() = _photo
 
-    val data: LiveData<FeedModel> = AppAuth.getInstance()
+    val data: LiveData<FeedModel> = appAuth
         .authState
         .flatMapLatest { auth ->
-            repository.data.map { posts ->
+            postRepository.data.map { posts ->
                 FeedModel(
                     posts.map { it.copy(ownedByMe = auth.id == it.authorId) },
                     empty = posts.isEmpty()
@@ -66,7 +68,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val newerCount: LiveData<Int> = data.switchMap {
         val firstId = it.posts.firstOrNull()?.id ?: 0L
 
-        repository.getNewerCount(firstId)
+        postRepository.getNewerCount(firstId)
             .asLiveData(Dispatchers.Default)
     }
 
@@ -100,7 +102,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             try {
-                repository.getAllAsync()
+                postRepository.getAllAsync()
                 _state.value = FeedModelState()
             } catch (e: Exception) {
                 _state.value = FeedModelState(loading = false, error = true)
@@ -121,8 +123,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             _edited.value?.let { post ->
                 try {
                     photo.value?.let {
-                        repository.saveAsyncWithAttachment(post.copy(author = "Netology"), it)
-                    } ?: repository.saveAsync(post.copy(author = "Netology"))
+                        postRepository.saveAsyncWithAttachment(post.copy(author = "Netology"), it)
+                    } ?: postRepository.saveAsync(post.copy(author = "Netology"))
                     _postCreated.postValue(true)
                     _edited.value = empty
                     _photo.value = null
@@ -154,7 +156,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun likeById(id: Long) {
         viewModelScope.launch {
             try {
-                repository.likeByIdAsync(id)
+                postRepository.likeByIdAsync(id)
                 _postLikeChanged.postValue(true)
             } catch (e: Exception) {
                 _postLikeChanged.postValue(false)
@@ -165,7 +167,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun removeById(id: Long) {
         viewModelScope.launch {
             try {
-                repository.removeByIdAsync(id)
+                postRepository.removeByIdAsync(id)
                 _postDeleted.postValue(
                     PostDeletedData(
                         isSuccessful = true,
@@ -189,7 +191,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             try {
-                repository.getAllAsync()
+                postRepository.getAllAsync()
                 _state.value = FeedModelState()
                 _postHiddenCountChanged.postValue(0)
             } catch (e: Exception) {
@@ -200,14 +202,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun readAllPosts() {
         viewModelScope.launch {
-            repository.readAllPosts()
+            postRepository.readAllPosts()
             _postHiddenCountChanged.postValue(0)
         }
     }
 
     fun getUnreadPostsCount() {
         viewModelScope.launch {
-            val count = repository.getUnreadCount()
+            val count = postRepository.getUnreadCount()
             _postHiddenCountChanged.postValue(count)
         }
     }

@@ -1,14 +1,17 @@
 package ru.netology.nmedia.repository
 
-import ru.netology.nmedia.api.UserApiService
+import ru.netology.nmedia.api.UserApi
 import ru.netology.nmedia.auth.AuthState
+import javax.inject.Inject
 
-class UserRepositoryImpl: UserRepository {
+class UserRepositoryImpl @Inject constructor(
+    private val userApiService: UserApi,
+): UserRepository {
     override suspend fun doLogin(login: String, password: String): AuthState {
-        return UserApiService.service.doLogin(login, password)
+        return userApiService.doLogin(login, password)
     }
 
     override suspend fun doRegister(login: String, password: String, name: String): AuthState {
-        return UserApiService.service.doRegister(login, password, name)
+        return userApiService.doRegister(login, password, name)
     }
 }

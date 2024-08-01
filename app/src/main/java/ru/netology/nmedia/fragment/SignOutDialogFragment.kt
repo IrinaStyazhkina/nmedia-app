@@ -7,13 +7,16 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 
-class SignOutDialogFragment : DialogFragment() {
+class SignOutDialogFragment @Inject constructor(
+    private val appAuth: AppAuth
+) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.sign_out_alert))
             .setPositiveButton(getString(R.string.sign_out)) { dialog, _ ->
-                AppAuth.getInstance().removeAuth()
+                appAuth.removeAuth()
                 dialog.dismiss()
                 findNavController()
                     .navigateUp()
@@ -24,6 +27,6 @@ class SignOutDialogFragment : DialogFragment() {
             .create()
 
     companion object {
-        const val TAG = "SignInDialog"
+        const val TAG = "SignOutDialog"
     }
 }
