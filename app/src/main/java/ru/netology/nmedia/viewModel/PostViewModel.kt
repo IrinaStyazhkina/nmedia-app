@@ -4,18 +4,19 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.model.Post
-import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
@@ -54,24 +55,20 @@ class PostViewModel @Inject constructor(
     val photo: LiveData<PhotoModel?>
         get() = _photo
 
-    val data: LiveData<FeedModel> = appAuth
+    val data: Flow<PagingData<Post>> = appAuth
         .authState
         .flatMapLatest { auth ->
             postRepository.data.map { posts ->
-                FeedModel(
-                    posts.map { it.copy(ownedByMe = auth.id == it.authorId) },
-                    empty = posts.isEmpty()
-                )
+                posts.map { it.copy(ownedByMe = auth.id == it.authorId) }
         }
-    }.asLiveData(Dispatchers.Default)
+    }.flowOn(Dispatchers.Default)
 
-    val newerCount: LiveData<Int> = data.switchMap {
-        val firstId = it.posts.firstOrNull()?.id ?: 0L
-
-        postRepository.getNewerCount(firstId)
-            .asLiveData(Dispatchers.Default)
-    }
-
+//    val newerCount: LiveData<Int> = data.switchMap {
+//        val firstId = it.posts.firstOrNull()?.id ?: 0L
+//
+//        postRepository.getNewerCount(firstId)
+//            .asLiveData(Dispatchers.Default)
+//    }
 
     private val _postCreated = SingleLiveEvent<Boolean>()
     val postCreated: LiveData<Boolean>
@@ -98,7 +95,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadPosts() {
-        _state.postValue(FeedModelState(loading = true))
+        //_state.postValue(FeedModelState(loading = true))
 
         viewModelScope.launch {
             try {
