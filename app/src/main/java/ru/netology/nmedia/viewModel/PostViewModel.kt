@@ -95,7 +95,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadPosts() {
-        _state.postValue(FeedModelState(loading = true))
+        //_state.postValue(FeedModelState(loading = true))
 
         viewModelScope.launch {
             try {
