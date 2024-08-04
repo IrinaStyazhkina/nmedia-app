@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.map
@@ -13,6 +14,8 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dao.PostRemoteKeyDao
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.model.Attachment
 import ru.netology.nmedia.model.AttachmentType
@@ -27,30 +30,24 @@ class PostRepositoryImpl @Inject constructor(
     private val postDao: PostDao,
     private val postApiService: PostApi,
     private val appAuth: AppAuth,
+    postRemoteKeyDao: PostRemoteKeyDao,
+    appDb: AppDb,
 ) : PostRepository {
+    @OptIn(ExperimentalPagingApi::class)
     override val data = Pager(
         config = PagingConfig(
             pageSize = 10,
             enablePlaceholders = false,
             maxSize = 200,
         ),
-//        pagingSourceFactory = {
-//            PostPagingSource(postApiService)
-//        }
+        pagingSourceFactory = { postDao.pagingSource() },
+        remoteMediator = PostRemoteMediator(postApiService, postDao, postRemoteKeyDao, appDb)
     )
-//        .flow
-    {
-        postDao.getAllPostPagingSource()
-    }.flow.map { pagingData ->
-        pagingData.map {
-            it.toDto()
+        .flow.map { pagingData ->
+            pagingData.map {
+                it.toDto()
+            }
         }
-    }
-
-
-//        postDao.getAll().map {
-//        it.map(PostEntity::toDto)
-//    }.flowOn(Dispatchers.Default)
 
     override fun getNewerCount(postId: Long): Flow<Int> =
         flow {
@@ -83,46 +80,40 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun likeByIdAsync(id: Long): Post {
         val data = postDao.getById(id) ?: throw RuntimeException("No post with provided id")
-        postDao.likeById(id)
-
-        return postDao.getById(id)?.toDto() ?: throw RuntimeException("No post with provided id")
-        //        return try {
-//            postDao.likeById(id)
-//            if (data.likedByMe) {
-//                postApiService.unlikeById(id)
-//            } else {
-//                postApiService.likeById(id)
-//            }
-//        } catch (e: Exception) {
-//            postDao.likeById(id)
-//            throw e
-//        }
+        return try {
+            postDao.likeById(id)
+            if (data.likedByMe) {
+                postApiService.unlikeById(id)
+            } else {
+                postApiService.likeById(id)
+            }
+        } catch (e: Exception) {
+            postDao.likeById(id)
+            throw e
+        }
     }
 
 
     override suspend fun removeByIdAsync(id: Long) {
         val data = postDao.getById(id) ?: throw RuntimeException("No post with provided id")
-        postDao.removeById(id)
-
-        //        try {
-//            postDao.removeById(id)
-//            postApiService.deleteById(id)
-//        } catch (e: Exception) {
-//            postDao.insert(data)
-//            throw e
-//        }
+        try {
+            postDao.removeById(id)
+            postApiService.deleteById(id)
+        } catch (e: Exception) {
+            postDao.insert(data)
+            throw e
+        }
     }
 
-    override suspend fun saveAsync(post: Post){
-        postDao.save(PostEntity.fromDto(post.copy(authorId = appAuth.authState.value.id)))
-//        return try {
-//            val created = postApiService.save(post)
-//            postDao.save(PostEntity.fromDto(created))
-//            created
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            post
-//        }
+    override suspend fun saveAsync(post: Post): Post {
+        return try {
+            val created = postApiService.save(post)
+            postDao.save(PostEntity.fromDto(created))
+            created
+        } catch (e: Exception) {
+            e.printStackTrace()
+            post
+        }
     }
 
     override suspend fun saveAsyncWithAttachment(post: Post, model: PhotoModel): Post {

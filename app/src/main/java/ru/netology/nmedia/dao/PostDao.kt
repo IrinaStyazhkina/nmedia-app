@@ -14,7 +14,7 @@ interface PostDao {
     fun getAll(): Flow<List<PostEntity>>
 
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
-    fun getAllPostPagingSource(): PagingSource<Int, PostEntity>
+    fun pagingSource(): PagingSource<Int, PostEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
@@ -57,5 +57,8 @@ interface PostDao {
 
     @Query("SELECT * FROM PostEntity WHERE id=:id")
     suspend fun getById(id: Long): PostEntity?
+
+    @Query("DELETE FROM PostEntity")
+    suspend fun clear()
 
 }
