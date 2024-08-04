@@ -13,6 +13,9 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE hidden = 0 ORDER BY id DESC")
     fun getAll(): Flow<List<PostEntity>>
 
+    @Query("SELECT (SELECT COUNT(*) FROM PostEntity) == 0")
+    fun isEmpty(): Boolean
+
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun pagingSource(): PagingSource<Int, PostEntity>
 

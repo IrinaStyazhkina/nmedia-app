@@ -25,9 +25,15 @@ class PostRemoteMediator(
         state: PagingState<Int, PostEntity>
     ): MediatorResult {
         try {
+            val isDbEmpty = appDb.postDao().isEmpty()
             val result = when (loadType) {
                 LoadType.REFRESH -> {
-                    postApi.getLatest(state.config.pageSize)
+                    if(isDbEmpty) {
+                        postApi.getLatest(state.config.pageSize)
+                    } else {
+                        val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
+                        postApi.getAfter(id, state.config.pageSize)
+                    }
                 }
 
                 LoadType.APPEND -> {
@@ -51,18 +57,27 @@ class PostRemoteMediator(
             appDb.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        postRemoteKeyDao.insert(
-                            listOf(
+                        if(isDbEmpty) {
+                            postRemoteKeyDao.insert(
+                                listOf(
+                                    PostRemoteKeyEntity(
+                                        PostRemoteKeyEntity.KeyType.AFTER,
+                                        body.first().id
+                                    ),
+                                    PostRemoteKeyEntity(
+                                        PostRemoteKeyEntity.KeyType.BEFORE,
+                                        body.last().id
+                                    )
+                                )
+                            )
+                        } else {
+                            postRemoteKeyDao.insert(
                                 PostRemoteKeyEntity(
                                     PostRemoteKeyEntity.KeyType.AFTER,
                                     body.first().id
-                                ),
-                                PostRemoteKeyEntity(
-                                    PostRemoteKeyEntity.KeyType.BEFORE,
-                                    body.last().id
                                 )
                             )
-                        )
+                        }
                     }
 
                     LoadType.APPEND -> {
