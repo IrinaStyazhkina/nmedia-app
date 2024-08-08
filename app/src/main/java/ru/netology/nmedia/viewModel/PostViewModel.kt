@@ -90,10 +90,6 @@ class PostViewModel @Inject constructor(
     val postHiddenCountChanged: LiveData<Int>
         get() = _postHiddenCountChanged
 
-    init {
-        loadPosts()
-    }
-
     fun loadPosts() {
         //_state.postValue(FeedModelState(loading = true))
 
@@ -183,31 +179,10 @@ class PostViewModel @Inject constructor(
     }
 
 
-    fun refresh() {
-        _state.postValue(FeedModelState(refreshing = true))
-
-        viewModelScope.launch {
-            try {
-                postRepository.getAllAsync()
-                _state.value = FeedModelState()
-                _postHiddenCountChanged.postValue(0)
-            } catch (e: Exception) {
-                _state.value = FeedModelState(refreshing = false, error = true)
-            }
-        }
-    }
-
     fun readAllPosts() {
         viewModelScope.launch {
             postRepository.readAllPosts()
             _postHiddenCountChanged.postValue(0)
-        }
-    }
-
-    fun getUnreadPostsCount() {
-        viewModelScope.launch {
-            val count = postRepository.getUnreadCount()
-            _postHiddenCountChanged.postValue(count)
         }
     }
 }
