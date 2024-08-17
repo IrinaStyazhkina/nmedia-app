@@ -14,6 +14,7 @@ import ru.netology.nmedia.formatCount
 import ru.netology.nmedia.handler.loadContentImage
 import ru.netology.nmedia.handler.loadWithCircleCrop
 import ru.netology.nmedia.model.AttachmentType
+import ru.netology.nmedia.utils.DateUtils
 
 class PostViewHolder(
     private val binding: CardPostBinding,
@@ -23,7 +24,7 @@ class PostViewHolder(
         binding.apply {
             ivLogo.loadWithCircleCrop("${BASE_URL}/avatars/${post.authorAvatar}")
             tvAuthor.text = post.author
-            tvPublished.text = post.published
+            tvPublished.text = DateUtils.getDate(post.published)
             tvContent.text = Html.fromHtml(post.content)
             like.text = formatCount(post.likes)
             share.text = formatCount(post.shares)

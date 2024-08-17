@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.model.FeedItem
 import ru.netology.nmedia.model.Post
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
@@ -31,7 +32,7 @@ private val empty = Post(
     author = "",
     authorId = -1L,
     likedByMe = false,
-    published = "",
+    published = 0L,
     authorAvatar = "",
 )
 
@@ -55,11 +56,17 @@ class PostViewModel @Inject constructor(
     val photo: LiveData<PhotoModel?>
         get() = _photo
 
-    val data: Flow<PagingData<Post>> = appAuth
+    val data: Flow<PagingData<FeedItem>> = appAuth
         .authState
         .flatMapLatest { auth ->
             postRepository.data.map { posts ->
-                posts.map { it.copy(ownedByMe = auth.id == it.authorId) }
+                posts.map { post ->
+                    if(post is Post) {
+                        post.copy(ownedByMe = auth.id == post.authorId)
+                    } else {
+                        post
+                    }
+                }
         }
     }.flowOn(Dispatchers.Default)
 
