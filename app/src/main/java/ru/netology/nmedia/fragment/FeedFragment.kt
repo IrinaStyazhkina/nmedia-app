@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import ru.netology.nmedia.OnInteractionListener
 import ru.netology.nmedia.model.Post
 import ru.netology.nmedia.R
+import ru.netology.nmedia.adapter.PostLoadingStateAdapter
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.fragment.AttachmentFragment.Companion.urlArg
@@ -79,7 +80,10 @@ class FeedFragment : Fragment() {
                     )
             }
         })
-        binding.list.adapter = adapter
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter{ adapter.retry() },
+            footer = PostLoadingStateAdapter{ adapter.retry() }
+        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -91,9 +95,7 @@ class FeedFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 adapter.loadStateFlow.collectLatest { state ->
                     binding.swipeRefresh.isRefreshing =
-                        state.refresh is LoadState.Loading ||
-                                state.prepend is LoadState.Loading ||
-                                state.append is LoadState.Loading
+                        state.refresh is LoadState.Loading
                 }
             }
         }

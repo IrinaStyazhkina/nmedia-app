@@ -58,4 +58,7 @@
     <string name="close">Close</string>
     <string name="name">Name</string>
     <string name="name_not_empty">Name can not be empty</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="last_week">Last week</string>
 </resources>

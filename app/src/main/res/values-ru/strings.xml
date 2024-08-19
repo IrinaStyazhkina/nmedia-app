@@ -59,4 +59,7 @@
     <string name="close">Закрыть</string>
     <string name="name">Имя</string>
     <string name="name_not_empty">Поле Имя не может быть пустым</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
+    <string name="last_week">На прошлой неделе</string>
 </resources>
