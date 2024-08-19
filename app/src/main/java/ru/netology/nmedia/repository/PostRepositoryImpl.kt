@@ -60,7 +60,7 @@ class PostRepositoryImpl @Inject constructor(
                         Ad(Random.nextLong(), "figma.jpg", prev.published)
                     } else null
                 }.insertSeparators(TerminalSeparatorType.SOURCE_COMPLETE) { prev, next ->
-                    if(prev == null && next != null ) {
+                    if(prev == null && next != null && DateUtils.isToday(next.published)) {
                         TimeSeparator(Random.nextLong(), TimeSeparatorValue.TODAY)
                     } else if(prev != null && next is Post && DateUtils.isToday(prev.published) && DateUtils.isYesterday(next.published)) {
                         TimeSeparator(Random.nextLong(), TimeSeparatorValue.YESTERDAY)
